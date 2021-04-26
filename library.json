@@ -1,0 +1,21 @@
+{
+  "name": "stevesch-Display",
+  "keywords": "",
+  "description": "",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/stevesch/stevesch-Display"
+  },
+  "exclude": "tests",
+  "frameworks": "arduino",
+  "platforms": "*",
+  "authors":
+  {
+    "name": "Stephen Schlueter",
+    "url": "",
+    "maintainer": true
+  },
+  "dependencies": [
+  ]
+}
