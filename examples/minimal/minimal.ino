@@ -1,5 +1,10 @@
-#include <Arduino.h>
 // This is a test example for Display
+#include <Arduino.h>
+#include <stevesch-Display.h>
+
+#define TFT_WIDTH 240
+#define TFT_HEIGHT 320
+stevesch::Display display(TFT_WIDTH, TFT_HEIGHT);
 
 void setup()
 {

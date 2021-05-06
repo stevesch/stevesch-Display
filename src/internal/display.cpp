@@ -2,7 +2,7 @@
 #include <Streaming.h>
 
 #if ENABLE_MULTI_CORE_COPY
-#include "board-hw/multi-core.h"
+#include "multi-core.h"
 #endif
 
 // using stevesch::Display::foo;
@@ -14,23 +14,21 @@ namespace {
 
 namespace stevesch {
 
-Display::Display(TFT_eSPI* pTft) :
-  mTft(pTft),
-  mRenderTarget(0),
+Display::Display(int16_t width, int16_t height) :
+  mTft(width, height), // Invoke custom library
   mViewportX(0), mViewportY(0),
 #if ENABLE_TFT_DMA
-  TFT_eSprite backbuffer { TFT_eSprite(pTft), TFT_eSprite(pTft) },
-  renderTargetIndex(0),
-  mRenderTarget(pTft) // default to display-- use backbuffer if creation succeeds
+  mRenderTargetIndex(0),
+  mBackbuffer { TFT_eSprite(&mTft), TFT_eSprite(&mTft) },
+  mRenderTarget(&mTft) // default to display-- use backbuffer if creation succeeds
 #elif ENABLE_MULTI_CORE_COPY
-  TFT_eSprite backbuffer { TFT_eSprite(pTft), TFT_eSprite(pTft) },
+  mBackbuffer { TFT_eSprite(&mTft), TFT_eSprite(&mTft) },
   mRenderTarget(0)
 #else
-  mBackbuffer { TFT_eSprite(pTft) },
-  mRenderTarget(pTft) // default to display-- use backbuffer if creation succeeds
+  mBackbuffer { TFT_eSprite(&mTft) },
+  mRenderTarget(&mTft) // default to display-- use backbuffer if creation succeeds
 #endif
 {
-  // TFT_eSPI display(SCREEN_WIDTH, SCREEN_HEIGHT); // Invoke custom library
 }
 
 Display::~Display()
@@ -42,12 +40,12 @@ Display::~Display()
 // use clearRenderTarget/finishRender instead, whenever possible.
 void Display::clearDisplay(uint16_t fillColor)
 {
-  display.fillScreen(fillColor);
+  tft()->fillScreen(fillColor);
 }
 
 void Display::clearRenderTarget(uint16_t fillColor)
 {
-  if (mRenderTarget == mTft)
+  if (mRenderTarget == &mTft)
   {
     mRenderTarget->fillScreen(fillColor);
   }
@@ -71,29 +69,29 @@ void Display::clearRenderTarget(uint16_t fillColor)
 void Display::finishRender()
 {
 #if ENABLE_TFT_DMA
-  if (mRenderTarget != &display)
+  if (mRenderTarget != &mTft)
   {
     TFT_eSprite *src = (TFT_eSprite *)mRenderTarget;
-    renderTargetIndex = (renderTargetIndex + 1) % renderTargetCount;
-    mRenderTarget = &backbuffer[renderTargetIndex];
-    display.dmaWait();
+    mRenderTargetIndex = (mRenderTargetIndex + 1) % renderTargetCount;
+    mRenderTarget = &mBackbuffer[mRenderTargetIndex];
+    tft()->dmaWait();
     // We're claiming SPI usage within setup, so no need for claim/yield here
-    // displayClaimSPI();
-    display.pushImageDMA(viewport_x, viewport_y,
+    // claimSPI();
+    tft()->pushImageDMA(mViewportX, mViewportY,
                          src->width(), src->height(),
                          (uint16_t *)src->getPointer());
-    // displayYieldSPI();
+    // yieldSPI();
   }
 #elif ENABLE_MULTI_CORE_COPY
-  if (mRenderTarget && (mRenderTarget != &display))
+  if (mRenderTarget && (mRenderTarget != &mTft))
   {
-    signalDrawBufferReady((TFT_eSprite *)mRenderTarget, viewport_x, viewport_y);
+    signalDrawBufferReady((TFT_eSprite *)mRenderTarget, mViewportX, mViewportY);
     mRenderTarget = claimDrawBuffer();
   }
 #else
-  if (mRenderTarget != &display)
+  if (mRenderTarget != &mTft)
   {
-    backbuffer[0].pushSprite(viewport_x, viewport_y);
+    mBackbuffer[0].pushSprite(mViewportX, mViewportY);
   }
   // else no backbuffer-- no work to do
 #endif
@@ -116,22 +114,22 @@ void ICACHE_FLASH_ATTR Display::setupDisplay()
   // Serial << "Initializing display (" <<
   //   SCREEN_WIDTH << " x " <<
   //   SCREEN_HEIGHT << ")" << endl);
-  display.init();
-  Serial << "Display initialized (" << display.width() << " x " << display.height() << ")" << endl;
+  TFT_eSPI* pTft = tft();
+  pTft->init();
+  Serial << "Display initialized (" << pTft->width() << " x " << pTft->height() << ")" << endl;
 
   clearDisplay();
 #if ENABLE_TFT_DMA
-  display.initDMA();
+  pTft->initDMA();
 #endif
-  display.setTextFont(DEFAULT_FONT);
-  display.setTextSize(DEFAULT_TEXT_SIZE);
-  display.setTextColor(DEFAULT_TEXT_COLOR);
-  display.setCursor(0, 0);
+  pTft->setTextFont(DEFAULT_FONT);
+  pTft->setTextSize(DEFAULT_TEXT_SIZE);
+  pTft->setTextColor(DEFAULT_TEXT_COLOR);
+  pTft->setCursor(0, 0);
 
 #if !DISABLE_BACKBUFFER
-  // backbuffer.createSprite(display.width(), display.height());
-  const uint displayWidth = display.width();
-  const uint displayHeight = display.height();
+  const uint displayWidth = pTft->width();
+  const uint displayHeight = pTft->height();
   uint targetWidth = displayWidth;
   uint targetHeight = displayHeight;
   float factor = 1.0f;
@@ -140,8 +138,8 @@ void ICACHE_FLASH_ATTR Display::setupDisplay()
     int i;
     for (i = 0; i < renderTargetCount; ++i)
     {
-      backbuffer[i].createSprite(targetWidth, targetHeight);
-      if (!backbuffer[i].created())
+      mBackbuffer[i].createSprite(targetWidth, targetHeight);
+      if (!mBackbuffer[i].created())
       {
         break;
       }
@@ -151,7 +149,7 @@ void ICACHE_FLASH_ATTR Display::setupDisplay()
       // couldn't create all of the backbuffers-- delete any we already created
       while (--i >= 0)
       {
-        backbuffer[i].deleteSprite();
+        mBackbuffer[i].deleteSprite();
       }
     }
     else
@@ -166,12 +164,12 @@ void ICACHE_FLASH_ATTR Display::setupDisplay()
     targetHeight = (int)(displayHeight * factor);
   } while (targetWidth > 10);
 
-  viewport_x = ((int)displayWidth - targetWidth) / 2;
-  viewport_y = ((int)displayHeight - targetHeight) / 2;
+  mViewportX = ((int)displayWidth - targetWidth) / 2;
+  mViewportY = ((int)displayHeight - targetHeight) / 2;
 
   for (int i = 0; i < renderTargetCount; ++i)
   {
-    auto &target = backbuffer[i];
+    auto &target = mBackbuffer[i];
     if (target.created())
     {
       target.setTextFont(DEFAULT_FONT);
@@ -181,38 +179,38 @@ void ICACHE_FLASH_ATTR Display::setupDisplay()
     }
   }
 
-  if (backbuffer[0].created())
+  if (mBackbuffer[0].created())
   {
-    mRenderTarget = &backbuffer[0];
+    mRenderTarget = &mBackbuffer[0];
   }
-  // else mRenderTarget = &display already
+  // else mRenderTarget = &mTft already
 
-  Serial << "Backbuffer " << (backbuffer[0].created() ? "created" : "CREATION FAILED") << " (" << backbuffer[0].width() << " x " << backbuffer[0].height() << ")[" << renderTargetCount << "]" << endl;
-  Serial << "Viewport: <" << viewport_x << ", " << viewport_y << ">" << endl;
+  Serial << "Backbuffer " << (mBackbuffer[0].created() ? "created" : "CREATION FAILED") << " (" << mBackbuffer[0].width() << " x " << mBackbuffer[0].height() << ")[" << renderTargetCount << "]" << endl;
+  Serial << "Viewport: <" << mViewportX << ", " << mViewportY << ">" << endl;
 
 #endif // !DISABLE_BACKBUFFER
 
 #if ENABLE_MULTI_CORE_COPY
-  initMultiCoreCopy(backbuffer, renderTargetCount);
+  initMultiCoreCopy(mBackbuffer, renderTargetCount);
   mRenderTarget = claimDrawBuffer();
 #endif
 
-  displayClaimSPI();
+  claimSPI();
 }
 
 
-void Display::displayClaimSPI()
+void Display::claimSPI()
 {
 #if ENABLE_TFT_DMA
-  display.startWrite(); // grab exclusive use of SPI bus
-#endif
-}
-void Display::displayYieldSPI()
-{
-#if ENABLE_TFT_DMA
-  display.endWrite(); // grab exclusive use of SPI bus
+  tft()->startWrite(); // grab exclusive use of SPI bus
 #endif
 }
 
+void Display::yieldSPI()
+{
+#if ENABLE_TFT_DMA
+  tft()->endWrite(); // grab exclusive use of SPI bus
+#endif
 }
+
 }

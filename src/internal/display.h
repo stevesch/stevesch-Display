@@ -20,7 +20,7 @@ namespace stevesch
 class Display
 {
 public:
-  Display(TFT_eSPI* pTft);
+  Display(int16_t width, int16_t height);
   ~Display();
 
   void clearDisplay(uint16_t fillColor = CLEAR_COLOR);
@@ -31,13 +31,16 @@ public:
 
   // NOTE: there is no error checking in these-- they must be paired
   // (never call yield w/o first calling claim)
-  void displayClaimSPI(); // must call before rendering (before finishRender)
-  void displayYieldSPI(); // call when rendering finished (after finishRender)
+  void claimSPI(); // must call before rendering (before finishRender)
+  void yieldSPI(); // call when rendering finished (after finishRender)
+
+  TFT_eSPI* currentRenderTarget() { return mRenderTarget; }
+
+  // direct access to TFT (for issuing commands-- use sparingly)
+  TFT_eSPI* tft() { return &mTft; }
 
 private:
-  TFT_eSPI *mTft;
-  TFT_eSPI *mRenderTarget;
-  int mRenderTargetIndex;
+  TFT_eSPI mTft;
 
   // position on screen where backbuffer is rendered:
   int32_t mViewportX;
@@ -45,7 +48,7 @@ private:
 
 #if ENABLE_TFT_DMA
   static const int renderTargetCount = 2;
-  int renderTargetIndex;
+  int mRenderTargetIndex;
 #elif ENABLE_MULTI_CORE_COPY
   static const int renderTargetCount = 2;
   // const int renderTargetCount = 3;
@@ -53,7 +56,9 @@ private:
 #else
   static const int renderTargetCount = 1;
 #endif
+
   TFT_eSprite mBackbuffer[renderTargetCount];
+  TFT_eSPI *mRenderTarget;
 };
 
 }
