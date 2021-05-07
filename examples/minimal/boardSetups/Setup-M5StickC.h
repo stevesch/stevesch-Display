@@ -71,9 +71,10 @@
 #define SMOOTH_FONT
 
 // #define SPI_FREQUENCY  20000000  // 
-// #define SPI_FREQUENCY  27000000  // 
-#define SPI_FREQUENCY  40000000     // 
-// #define SPI_FREQUENCY  80000000  // 
+#define SPI_FREQUENCY  27000000  // recommended for M5StickC
+// #define SPI_FREQUENCY  35000000  // M5StickC: framerate increase, seems to work, but...
+// #define SPI_FREQUENCY  40000000  // M5StickC: results in screen offset (bottom edge noise)
+// #define SPI_FREQUENCY  80000000  // M5StickC: black screen
 
 #define SPI_READ_FREQUENCY  20000000
 #define SPI_TOUCH_FREQUENCY  2500000

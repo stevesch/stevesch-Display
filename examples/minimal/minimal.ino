@@ -4,6 +4,11 @@
 
 #include "boardSettings.h"
 
+#ifdef AXP192_ADDRESS
+	// AXP192 power management chip support (M5StickC)
+#include "board-hw/axp192.h"
+#endif
+
 stevesch::Display display(TFT_WIDTH, TFT_HEIGHT);
 
 long lastDraw = 0;
@@ -15,27 +20,33 @@ void setup()
   while (!Serial);
   Serial.println("Setup initializing...");
 
-// #ifdef I2C_SDA
-// 	Wire.begin(I2C_SDA, I2C_SCL);
-// #endif
+#ifdef I2C_SDA
+  // M5StickC/M5StickC Plus support
+	Wire.begin(I2C_SDA, I2C_SCL);
+
+	#ifdef AXP192_ADDRESS
+	Wire.setClock(400000);
+	axpSetup();
+	#endif
+#endif
 
   display.setup();
 
   // simple blocking message:
   display.fullScreenMessage("Display demo");
-  delay(3000);
+  delay(2000);
 
   display.currentRenderTarget()->setTextColor(TFT_RED);
   display.fullScreenMessage("Red text example");
-  delay(2000);
+  delay(1000);
 
   display.currentRenderTarget()->setTextColor(TFT_GREEN);
   display.fullScreenMessage("Green text example");
-  delay(2000);
+  delay(1000);
 
   display.currentRenderTarget()->setTextColor(TFT_BLUE);
   display.fullScreenMessage("Blue text example");
-  delay(2000);
+  delay(1000);
 
   // Note: setting text color is per backbuffer, so to return text to default color,
   // we do this for all buffers.  (alternatively, we could just call setTextColor

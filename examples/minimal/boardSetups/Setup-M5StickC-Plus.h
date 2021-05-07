@@ -68,9 +68,9 @@
 
 //                                 //  single    multi     dma
 // #define SPI_FREQUENCY  20000000 //  
-// #define SPI_FREQUENCY  27000000 //  
-#define SPI_FREQUENCY  40000000 //  
-// #define SPI_FREQUENCY  80000000 //  
+// #define SPI_FREQUENCY  27000000 // M5StickC Plus: OK (51+ fps)
+#define SPI_FREQUENCY  40000000 // (max for SPIFFS?) M5StickC Plus: OK (76+ fps)
+// #define SPI_FREQUENCY  80000000 // M5StickC Plus: seems to work OK (150+ fps)
 
 #define SPI_READ_FREQUENCY  20000000
 #define SPI_TOUCH_FREQUENCY  2500000
