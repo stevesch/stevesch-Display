@@ -7,27 +7,22 @@
 
 namespace stevesch
 {
-
-// constexpr int16_t SCREEN_WIDTH = (int16_t)TFT_WIDTH;
-// constexpr int16_t SCREEN_HEIGHT = (int16_t)TFT_HEIGHT;
-
-#define DEFAULT_FONT        1
-#define DEFAULT_TEXT_SIZE   1
-#define DEFAULT_TEXT_COLOR  TFT_WHITE
-#define CLEAR_COLOR         TFT_BLACK
-
-
 class Display
 {
 public:
   Display(int16_t width, int16_t height);
   ~Display();
 
-  void clearDisplay(uint16_t fillColor = CLEAR_COLOR);
-  void clearRenderTarget(uint16_t fillColor = CLEAR_COLOR);
+  static constexpr uint8_t DEFAULT_FONT = 1;
+  static constexpr uint8_t DEFAULT_TEXT_SIZE = 1;
+  static constexpr uint16_t DEFAULT_TEXT_COLOR = TFT_WHITE;
+  static constexpr uint16_t DEFAULT_CLEAR_COLOR = TFT_BLACK;
+
+  void clearDisplay(uint16_t fillColor = DEFAULT_CLEAR_COLOR);
+  void clearRenderTarget(uint16_t fillColor = DEFAULT_CLEAR_COLOR);
   void finishRender();
   void fullScreenMessage(const String& msg);
-  void setupDisplay();
+  void setup();
 
   // NOTE: there is no error checking in these-- they must be paired
   // (never call yield w/o first calling claim)
@@ -35,6 +30,9 @@ public:
   void yieldSPI(); // call when rendering finished (after finishRender)
 
   TFT_eSPI* currentRenderTarget() { return mRenderTarget; }
+
+  typedef void (*renderTargetCallback_t)(TFT_eSPI*, void*);
+  void forEachRenderTarget(renderTargetCallback_t callback, void* context);
 
   // direct access to TFT (for issuing commands-- use sparingly)
   TFT_eSPI* tft() { return &mTft; }
@@ -60,6 +58,15 @@ private:
   TFT_eSprite mBackbuffer[renderTargetCount];
   TFT_eSPI *mRenderTarget;
 };
+
+inline void Display::forEachRenderTarget(renderTargetCallback_t callback, void* context)
+{
+  int i;
+  for (i = 0; i < renderTargetCount; ++i)
+  {
+    callback(&mBackbuffer[i], context);
+  }
+}
 
 }
 

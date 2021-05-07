@@ -1,9 +1,8 @@
-#include "boardSettings.h"
 #if ENABLE_MULTI_CORE_COPY
 
 #include <FreeRTOS.h>
 #include <deque>
-#include <Streaming.h>
+// #include <Streaming.h>
 #include <TFT_eSPI.h>
 
 #include "multi-core.h"
@@ -107,7 +106,7 @@ void pushSprite_task(void *parameter)
         DataLock key(readyToCopy_key);
         if (!readyToCopy.size())
         {
-          Serial << "### Error: no readyToCopy buffer when signalled" << endl;
+          // Serial << "### Error: no readyToCopy buffer when signalled" << endl;
           vTaskDelay(1 / portTICK_PERIOD_MS);
           continue; // invalid
         }
@@ -145,7 +144,7 @@ void initMultiCoreCopy(TFT_eSprite *backbuffers, int backbufferCount)
   // Note: Arduino default core is 1, so we run the copy task on core 0 here:
   xTaskCreatePinnedToCore(pushSprite_task, "copyBuffer",
                           10000, NULL, tskIDLE_PRIORITY + 1, &xTask_pushSprite, 0);
-  Serial << "# Multi-core copy initialized (" << backbufferCount << " buffers)" << endl;
+  // Serial << "# Multi-core copy initialized (" << backbufferCount << " buffers)" << endl;
 }
 
 #endif

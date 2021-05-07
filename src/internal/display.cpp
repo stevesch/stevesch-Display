@@ -1,21 +1,14 @@
 #include "display.h"
-#include <Streaming.h>
+// #include <Streaming.h>
 
 #if ENABLE_MULTI_CORE_COPY
 #include "multi-core.h"
 #endif
 
-// using stevesch::Display::foo;
-
-namespace {
-  // local/static data and functions
-
-} // namespace
-
 namespace stevesch {
 
 Display::Display(int16_t width, int16_t height) :
-  mTft(width, height), // Invoke custom library
+  mTft(width, height),
   mViewportX(0), mViewportY(0),
 #if ENABLE_TFT_DMA
   mRenderTargetIndex(0),
@@ -47,6 +40,7 @@ void Display::clearRenderTarget(uint16_t fillColor)
 {
   if (mRenderTarget == &mTft)
   {
+    // If there is no backbuffer, we just fill the screen directly
     mRenderTarget->fillScreen(fillColor);
   }
   else
@@ -109,14 +103,11 @@ void Display::fullScreenMessage(const String& msg)
 }
 
 
-void ICACHE_FLASH_ATTR Display::setupDisplay()
+void ICACHE_FLASH_ATTR Display::setup()
 {
-  // Serial << "Initializing display (" <<
-  //   SCREEN_WIDTH << " x " <<
-  //   SCREEN_HEIGHT << ")" << endl);
   TFT_eSPI* pTft = tft();
   pTft->init();
-  Serial << "Display initialized (" << pTft->width() << " x " << pTft->height() << ")" << endl;
+  // Serial << "Display initialized (" << pTft->width() << " x " << pTft->height() << ")" << endl;
 
   clearDisplay();
 #if ENABLE_TFT_DMA
@@ -185,8 +176,8 @@ void ICACHE_FLASH_ATTR Display::setupDisplay()
   }
   // else mRenderTarget = &mTft already
 
-  Serial << "Backbuffer " << (mBackbuffer[0].created() ? "created" : "CREATION FAILED") << " (" << mBackbuffer[0].width() << " x " << mBackbuffer[0].height() << ")[" << renderTargetCount << "]" << endl;
-  Serial << "Viewport: <" << mViewportX << ", " << mViewportY << ">" << endl;
+  // Serial << "Backbuffer " << (mBackbuffer[0].created() ? "created" : "CREATION FAILED") << " (" << mBackbuffer[0].width() << " x " << mBackbuffer[0].height() << ")[" << renderTargetCount << "]" << endl;
+  // Serial << "Viewport: <" << mViewportX << ", " << mViewportY << ">" << endl;
 
 #endif // !DISABLE_BACKBUFFER
 
