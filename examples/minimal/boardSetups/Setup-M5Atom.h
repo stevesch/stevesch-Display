@@ -4,24 +4,56 @@
 // button pins, etc.) for a particular board configuration.
 
 // This file is configured for:
-// An M5StickC (ESP32-PICO with a built-in 80x160 display)
+// An M5 Atom Lite/Matrix (ESP32-PICO with no built-in display)
 
-#define BOARD_NAME  "M5StickC"
+#define BOARD_NAME  "M5Atom"
+
+// ----------------------------------------------------------------------------
+// M5 Atom specifics:
+
+#define PIN_NEO     27
+#define PIN_BTN     39
+
+#define MPU6886_CLK   21
+#define MPU6886_SDA   25
+#define PIN_IR      12
+
+#define GROVE_SCL   32
+#define GROVE_SDA   26
+
+// available pins:
+#define PIN_19      19
+#define PIN_21      21
+#define PIN_22      22
+#define PIN_23      23
+#define PIN_25      25
+#define PIN_33      33
+
+// #define _MISO 19   // SPI MISO : not used (NC) for Frame project
+// #define _MOSI 23   // SPI MOSI / SDA: data (SDA) pin of LCD
+// #define _SCLK 18   // SPI SCK / SCL: clock (SCL) pin of LCD
+// #define _CS    5   // SPI SS / CS: Chip select (CS) pin of LCD
+// #define _DC    17  // TXD / DC: Data Command (DC) pin of LCD
+// #define _RST   16  // RXD / RES: Reset (RES) pin of LCD
+//#define _RST  -1  // Set to -1 if display RESET is connected to ESP32 board RST
 
 // ----------------------------------------------------------------------------
 
 // This section is somewhat project-specific-- tailor to your requirements:
-#define BUTTON_1				37
-#define BUTTON_2				39
-#define WAKE_GPIO				GPIO_SEL_39
-#define USE_IMU		1
-#define IMU_ORIENTATION_E_N_U
-#define IMU_NO_MAG								// no compass on MPU6886
-#define IMU_ADDRESS 0x68
-#define AXP192_ADDRESS 0x34				// for backlight/power control
-#define I2C_SDA     21
-#define I2C_SCL     22
 
+	#define BUTTON_1        PIN_BTN
+	// #define BUTTON_2     xx				// action / sleep
+	#define WAKE_GPIO     	((uint64_t)(((uint64_t)1)<<BUTTON_1))
+	// no TFT display
+
+// #define USE_IMU		1
+// #define IMU_ORIENTATION_E_N_U
+// #define IMU_NO_MAG								// no compass on MPU6886
+// #define IMU_ADDRESS 0x68
+// #define I2C_SDA     21
+// #define I2C_SCL     22
+
+#if 0 // no display
 // ----------------------------------------------------------------------------
 // This section has board-specific advanced TFT options:
 #define ENABLE_TFT_DMA          1
@@ -43,7 +75,7 @@
 #define ST7735_GREENTAB160x80
 
 // #define CGRAM_OFFSET      // Library will add offsets required
-#define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
+ #define TFT_RGB_ORDER TFT_BGR  // Colour order Blue-Green-Red
 
 //#define TFT_MISO -1
 
@@ -80,3 +112,4 @@
 #define SPI_TOUCH_FREQUENCY  2500000
 
 // #define SUPPORT_TRANSACTIONS
+#endif
