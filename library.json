@@ -17,5 +17,6 @@
     "maintainer": true
   },
   "dependencies": [
+    "bodmer/TFT_eSPI@^2.3.59"
   ]
 }
