@@ -1,4 +1,14 @@
 #if ENABLE_MULTI_CORE_COPY
+/**
+ * @file multi-core.h
+ * @author Stephen Schlueter, github: stevesch
+ * @brief Queing and copying of backbuffer data for multi-core systems
+ * @version 0.1
+ * @date 2021-05-16
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 
 class DataLock
 {
