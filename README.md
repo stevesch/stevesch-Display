@@ -11,6 +11,11 @@ Simple example of backbuffered animation on (left-to-right) TTGO-TS, TTGO T-Disp
 
 The above demo animation is available in the examples/minimal folder of the workspace.
 
+A more sophisticated use showing 3D rendering can be found here:
+![stevesch-Mesh](https://github.com/stevesch/stevesch-Mesh)
+<br/>
+<br/>
+
 # Building and Running
 
 For a basic example, clone this repo and open the folder in PlatformIO.
