@@ -1,4 +1,13 @@
-// See SetupX_Template.h for all options available
+/**
+ * @file Setup-TTGO-T7-ILI9341.h
+ * @author Stephen Schlueter (https://github.com/stevesch)
+ * @brief 
+ * @version 0.1
+ * @date 2021-05-19
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
 
 // These settings specify the hardware connections (LCD/OLED display pins,
 // button pins, etc.) for a particular board configuration.

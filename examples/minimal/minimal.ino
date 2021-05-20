@@ -1,4 +1,14 @@
-// This is a test example for Display
+/**
+ * @file minimal.ino
+ * @author Stephen Schlueter (https://github.com/stevesch)
+ * @brief Test example for stevesch-Display
+ * @version 0.1
+ * @date 2021-05-19
+ * 
+ * @copyright Copyright (c) 2021
+ * 
+ */
+
 #include <Arduino.h>
 #include <stevesch-Display.h>
 
@@ -69,11 +79,16 @@ int clamp(int x, int a, int b) {
 }
 
 float exampleAccumTime = 0.0f;
-void renderExample(float dt)
+void advanceTime(float dt)
 {
   // simple delta-time based
+  // (simple example-- real-world use would perform all time updates here)
   exampleAccumTime += dt;
+}
 
+void renderExample()
+{
+  // ideally, don't perform updates within your render-- just draw based on state
   display.clearRenderTarget();
 
   TFT_eSPI* renderTarget = display.currentRenderTarget();
@@ -137,6 +152,13 @@ void loop()
     // some smoothing, so it's sufficient and easy:
     averageFps = (1.0f - kAvWeight)*averageFps + kAvWeight*fpsThisFrame;
 
-    renderExample(dt);
+    // In practice, we could separate update and render so that
+    // updates could happen more often than render if necessary, e.g. if rendering
+    // is taking too long but we want to maintain proper physics behavior
+    // (or visa-versa with multiple interpolated renders for a single update
+    // if it was appropriate for a particular case).
+    // For this simple example, we're just updating and rendering each time.
+    advanceTime(dt);
+    renderExample();
   }
 }
