@@ -33,7 +33,7 @@
         "boardSetups/Setup-M5StickC.h",
         "boardSetups/Setup-TTGO-T-Display.h",
         "boardSetups/Setup-TTGO-T7-ILI9341.h",
-        "boardSetups/Setup-TTGO-TS"
+        "boardSetups/Setup-TTGO-TS.h"
       ]
     }
   ],
