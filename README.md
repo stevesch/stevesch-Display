@@ -13,6 +13,13 @@ The above demo animation is available in the examples/minimal folder of the work
 
 A more sophisticated use showing 3D rendering can be found here:
 [stevesch-Mesh](https://github.com/stevesch/stevesch-Mesh)
+
+Images of some other examples:
+
+![Level Animation](docs/stevesch-Mesh-anim.gif)
+![Level Animation](docs/display-level-M5StickC-Plus.gif)
+![Gyro Animation 2](docs/display-gyro-M5StickC-Plus-002.gif)
+
 <br/>
 <br/>
 
