@@ -1,5 +1,6 @@
 {
   "name": "stevesch-Display",
+  "version": "0.1.0",
   "keywords": "Arduino, tft, display, double-buffer, flicker, core, ESP32, M5Stack, ILI9341, ST7735",
   "description": "Display library for double-buffered flicker-free rendering",
   "repository":
