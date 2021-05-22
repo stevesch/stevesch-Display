@@ -1,7 +1,7 @@
 {
   "name": "stevesch-Display",
-  "keywords": "",
-  "description": "",
+  "keywords": "Arduino, tft, display, double-buffer, flicker, core, ESP32, M5Stack, ILI9341, ST7735",
+  "description": "Display library for double-buffered flicker-free rendering",
   "repository":
   {
     "type": "git",
@@ -13,7 +13,7 @@
   "authors":
   {
     "name": "Stephen Schlueter",
-    "url": "",
+    "url": "https://github.com/stevesch",
     "maintainer": true
   },
   "dependencies": [
