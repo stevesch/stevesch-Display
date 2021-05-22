@@ -24,8 +24,16 @@
       "files": [
         "minimal.ino",
         "boardSettings.h",
-        "board-hw/*",
-        "boardSetups/*"
+        "board-hw/axp192.cpp",
+        "board-hw/axp192.h",
+        "boardSetups/Setup-Generic-ILI9341.h",
+        "boardSetups/Setup-Generic-ST7735.h",
+        "boardSetups/Setup-M5Atom.h",
+        "boardSetups/Setup-M5StickC-Plus.h",
+        "boardSetups/Setup-M5StickC.h",
+        "boardSetups/Setup-TTGO-T-Display.h",
+        "boardSetups/Setup-TTGO-T7-ILI9341.h",
+        "boardSetups/Setup-TTGO-TS"
       ]
     }
   ],
