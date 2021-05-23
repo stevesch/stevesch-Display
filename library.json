@@ -1,6 +1,6 @@
 {
   "name": "stevesch-Display",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "keywords": "Arduino, tft, display, double-buffer, flicker, core, ESP32, M5Stack, ILI9341, ST7735",
   "description": "Display library for double-buffered flicker-free rendering",
   "repository":
@@ -10,7 +10,7 @@
   },
   "exclude": "tests",
   "frameworks": "arduino",
-  "platforms": "*",
+  "platforms": "espressif, espressif8266, espressif32, ststm32",
   "authors":
   {
     "name": "Stephen Schlueter",
@@ -18,24 +18,7 @@
     "maintainer": true
   },
   "examples": [
-    {
-      "name": "minimal",
-      "base": "examples/minimal",
-      "files": [
-        "minimal.ino",
-        "boardSettings.h",
-        "board-hw/axp192.cpp",
-        "board-hw/axp192.h",
-        "boardSetups/Setup-Generic-ILI9341.h",
-        "boardSetups/Setup-Generic-ST7735.h",
-        "boardSetups/Setup-M5Atom.h",
-        "boardSetups/Setup-M5StickC-Plus.h",
-        "boardSetups/Setup-M5StickC.h",
-        "boardSetups/Setup-TTGO-T-Display.h",
-        "boardSetups/Setup-TTGO-T7-ILI9341.h",
-        "boardSetups/Setup-TTGO-TS.h"
-      ]
-    }
+    "examples/*/*.ino"
   ],
   "dependencies": [
     "bodmer/TFT_eSPI@^2.3.69"
